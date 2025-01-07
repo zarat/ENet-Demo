@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxv0sdh81ec2f"]
+
+[ext_resource type="Script" path="res://prefabs/player/player.gd" id="1_1d3pm"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ohcuc"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_3v8dl"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4p6uj"]
+
+[node name="PlayerCharacter" type="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.30221, 0)
+script = ExtResource("1_1d3pm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_ohcuc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_3v8dl")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.998708, 0)
+rotation_edit_mode = 1
+
+[node name="Message" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+billboard = 1
+font_size = 128
+
+[node name="Name" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+billboard = 1
+modulate = Color(0, 0, 0, 1)
+font_size = 64
+
+[node name="MouseClickArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MouseClickArea"]
+shape = SubResource("CapsuleShape3D_4p6uj")
