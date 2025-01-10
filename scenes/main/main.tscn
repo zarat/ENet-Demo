@@ -1,21 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://7qrebi2gqtno"]
+[gd_scene load_steps=9 format=3 uid="uid://7qrebi2gqtno"]
 
 [ext_resource type="Script" path="res://scenes/main/main.gd" id="1_rj0nf"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gjiah"]
-albedo_color = Color(0.380392, 0.639216, 0.317647, 1)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_o0b61"]
-size = Vector2(32, 32)
+[ext_resource type="Script" path="res://scenes/main/spawnarea.gd" id="2_kqgfh"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_rpj3h"]
 data = PackedVector3Array(16, 0, 16, -16, 0, 16, 16, 0, -16, -16, 0, 16, -16, 0, -16, 16, 0, -16)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ahy5b"]
+size = Vector2(32, 32)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tabfr"]
+uv1_scale = Vector3(5, 5, 5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mns0i"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_78niq"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bjb7l"]
+size = Vector3(5, 1, 5)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_rj0nf")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866026, -0.5, 0.75, -0.433013, 0, 15, 0)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 15, 0)
 shadow_enabled = true
 directional_shadow_max_distance = 250.0
 
@@ -25,12 +34,12 @@ anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -58.0
 offset_right = 58.0
-offset_bottom = 56.0
+offset_bottom = 31.0
 grow_horizontal = 2
 
 [node name="NetworkSideDisplay" type="Label" parent="NetworkInfo"]
 layout_mode = 2
-text = "Network Side"
+text = "Server"
 horizontal_alignment = 1
 
 [node name="UniquePeerID" type="Label" parent="NetworkInfo"]
@@ -38,16 +47,28 @@ layout_mode = 2
 text = "Unique Peer ID"
 horizontal_alignment = 1
 
+[node name="Button" type="Button" parent="NetworkInfo"]
+visible = false
+layout_mode = 2
+text = "Change Scene"
+
+[node name="TextEdit" type="TextEdit" parent="."]
+offset_left = 542.0
+offset_top = 359.0
+offset_right = 683.0
+offset_bottom = 397.0
+text = "127.0.0.1"
+
 [node name="Menu" type="VBoxContainer" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -39.5
-offset_top = -33.0
-offset_right = 39.5
-offset_bottom = 33.0
+offset_left = -21.0
+offset_top = -38.0
+offset_right = 95.0
+offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -71,18 +92,65 @@ offset_right = 256.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="."]
 
-[node name="Floor" type="MeshInstance3D" parent="StaticBody3D"]
-material_override = SubResource("StandardMaterial3D_gjiah")
-mesh = SubResource("PlaneMesh_o0b61")
-skeleton = NodePath("../..")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("ConcavePolygonShape3D_rpj3h")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("PlaneMesh_ahy5b")
+surface_material_override/0 = SubResource("StandardMaterial3D_tabfr")
 
+[node name="Camera3D" type="Camera3D" parent="."]
+cull_mask = 1048573
+fov = 60.0
+
+[node name="Boxes" type="Node" parent="."]
+
+[node name="Box" type="StaticBody3D" parent="Boxes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.411786, -4.93114)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box"]
+mesh = SubResource("BoxMesh_mns0i")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boxes/Box"]
+shape = SubResource("ConcavePolygonShape3D_78niq")
+
+[node name="Box2" type="StaticBody3D" parent="Boxes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.34581, 1.31086, -4.93114)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box2"]
+mesh = SubResource("BoxMesh_mns0i")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boxes/Box2"]
+shape = SubResource("ConcavePolygonShape3D_78niq")
+
+[node name="Box3" type="StaticBody3D" parent="Boxes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.72783, 2.11871, -4.93114)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box3"]
+mesh = SubResource("BoxMesh_mns0i")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boxes/Box3"]
+shape = SubResource("ConcavePolygonShape3D_78niq")
+
+[node name="Box4" type="StaticBody3D" parent="Boxes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.411786, -4.93114)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box4"]
+mesh = SubResource("BoxMesh_mns0i")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boxes/Box4"]
+shape = SubResource("ConcavePolygonShape3D_78niq")
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.18297, 0.531664, 5.28299)
+script = ExtResource("2_kqgfh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_bjb7l")
+
+[connection signal="pressed" from="NetworkInfo/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Menu/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Menu/Join" to="." method="_on_join_pressed"]
 [connection signal="text_submitted" from="MessageInput" to="." method="_on_message_input_text_submitted"]

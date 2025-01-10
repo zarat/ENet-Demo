@@ -11,6 +11,7 @@ var local_player_character
 func _on_host_pressed():
 	$NetworkInfo/NetworkSideDisplay.text = "Server"
 	$Menu.visible = false
+	$TextEdit.visible = false
 	multiplayer_peer.create_server(PORT)
 	multiplayer.multiplayer_peer = multiplayer_peer
 	$NetworkInfo/UniquePeerID.text = str(multiplayer.get_unique_id())
@@ -24,12 +25,18 @@ func _on_host_pressed():
 			rpc_id(new_peer_id, "add_previously_connected_player_characters", connected_peer_ids)
 			add_player_character(new_peer_id)
 	)
-
+	
+	multiplayer_peer.peer_disconnected.connect(
+		func(peer_id):
+			rpc("remove_player_character_for_all", peer_id)
+			remove_player_character(peer_id)
+	)
 
 func _on_join_pressed():
 	$NetworkInfo/NetworkSideDisplay.text = "Client"
 	$Menu.visible = false
-	multiplayer_peer.create_client(ADDRESS, PORT)
+	$TextEdit.visible = false
+	multiplayer_peer.create_client($TextEdit.text, PORT)
 	multiplayer.multiplayer_peer = multiplayer_peer
 	$NetworkInfo/UniquePeerID.text = str(multiplayer.get_unique_id())
 
@@ -41,6 +48,17 @@ func add_player_character(peer_id):
 	if peer_id == multiplayer.get_unique_id():
 		local_player_character = player_character
 
+@rpc
+func remove_player_character_for_all(peer_id):
+	remove_player_character(peer_id)
+
+func remove_player_character(peer_id):
+	connected_peer_ids.erase(peer_id)
+	for child in get_children():
+		if child.get_multiplayer_authority() == peer_id:
+			child.queue_free()
+			break
+			
 @rpc
 func add_newly_connected_player_character(new_peer_id):
 	add_player_character(new_peer_id)
@@ -54,3 +72,16 @@ func _on_message_input_text_submitted(new_text):
 	local_player_character.rpc("display_message", new_text)
 	$MessageInput.text = ""
 	$MessageInput.release_focus()
+
+const NEXT_SCENE_PATH = "res://scenes/new_scene/new_scene.tscn"
+func change_to_scene(new_scene_path):
+	get_tree().change_scene_to_file(new_scene_path)
+	rpc("change_scene_for_all", NEXT_SCENE_PATH)
+		
+func _on_button_pressed():
+	change_to_scene(NEXT_SCENE_PATH)
+
+func respawn_all_players():
+	for peer_id in multiplayer.player_data.keys():
+		var position = multiplayer.get_player_position(peer_id)
+		rpc("spawn_player", peer_id, position)
