@@ -3,10 +3,10 @@ extends CharacterBody3D
 # onready variables
 @onready var collision_shape = $CollisionShape3D 
 @onready var head = $Head
-#@onready var spawnarea = $Main/Area3D
+@onready var guncamera = $Head/SubViewportContainer/SubViewport/WeaponCamera
+
 var spawnarea
 var viewportcontainer
-@onready var guncamera = $Head/SubViewportContainer/SubViewport/WeaponCamera
 
 # variables
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -20,8 +20,12 @@ var main_camera
 var health = 100
 
 func _ready():
+	
+	# display our name
 	name = str(get_multiplayer_authority())
 	$Name.text = str(name)
+	
+	# deactivate weaponcamera on non-authoritative players
 	get_node("Head/SubViewportContainer/SubViewport/WeaponCamera").current = false
 	
 	if is_multiplayer_authority():
@@ -34,10 +38,7 @@ func _ready():
 		viewportcontainer = get_node("Head/SubViewportContainer")
 		viewportcontainer.reparent(main_camera)
 		take_damage(0)
-		
-	#else:
-		#get_node("Head/MeshInstance3D").queue_free()
-		
+
 	var area = get_tree().root.get_node("Main/Area3D")
 	if area:
 		var random_position = area.get_random_position_within_area()
@@ -48,7 +49,6 @@ func _process(delta):
 	if is_multiplayer_authority():
 		get_input()
 		guncamera.global_transform = head.global_transform
-
 
 func _physics_process(delta):
 	if is_multiplayer_authority():
@@ -201,6 +201,7 @@ func take_damage(amount):
 		if area:
 			var random_position = area.get_random_position_within_area()
 			position = random_position
+			print(str(position))
 		health = 100
 	$Message.text = str(health)
 	#_take_damage.rpc(amount)
@@ -220,6 +221,8 @@ func _take_damage(amount):
 	
 @rpc
 func _shoot(root, target):
+	
+	# only print a line and a bullethole
 	var linemesh = ImmediateMesh.new()
 	linemesh.surface_begin(Mesh.PRIMITIVE_LINES)
 	linemesh.surface_add_vertex(root)
