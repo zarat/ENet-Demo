@@ -72,16 +72,3 @@ func _on_message_input_text_submitted(new_text):
 	local_player_character.rpc("display_message", new_text)
 	$MessageInput.text = ""
 	$MessageInput.release_focus()
-
-const NEXT_SCENE_PATH = "res://scenes/new_scene/new_scene.tscn"
-func change_to_scene(new_scene_path):
-	get_tree().change_scene_to_file(new_scene_path)
-	rpc("change_scene_for_all", NEXT_SCENE_PATH)
-		
-func _on_button_pressed():
-	change_to_scene(NEXT_SCENE_PATH)
-
-func respawn_all_players():
-	for peer_id in multiplayer.player_data.keys():
-		var position = multiplayer.get_player_position(peer_id)
-		rpc("spawn_player", peer_id, position)
