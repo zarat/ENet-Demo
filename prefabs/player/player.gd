@@ -32,7 +32,8 @@ func _ready():
 		head.visible = true
 		main_camera = get_tree().root.get_node("Main/Camera3D")
 		main_camera.reparent(head)
-		main_camera.position = head.position
+		#main_camera.position = head.position
+		main_camera.global_transform = head.global_transform
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		spawnarea = get_tree().root.get_node("Main/Area3D")
 		viewportcontainer = get_node("Head/SubViewportContainer")
