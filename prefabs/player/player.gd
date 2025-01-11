@@ -56,6 +56,7 @@ func _physics_process(delta):
 		velocity.y += -gravity * delta
 		move_and_slide()
 		rpc("remote_set_position", global_position)
+		rpc("remote_set_rotation", global_rotation)
 
 func get_input():
 	if !is_multiplayer_authority():
@@ -265,10 +266,13 @@ func _shoot(root, target):
 	get_tree().root.add_child(bullet_holetimer)
 	bullet_holetimer.start()
 	
-# deprecated
 @rpc 
 func remote_set_position(authority_position):
 	global_position = authority_position
+
+@rpc 
+func remote_set_rotation(authority_rotation):
+	global_rotation = authority_rotation
 
 @rpc 
 func display_message(message):
