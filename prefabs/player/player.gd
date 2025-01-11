@@ -150,6 +150,9 @@ func shoot():
 		bullet_hole.material_override = StandardMaterial3D.new()
 		bullet_hole.material_override.albedo_color = Color(0, 0, 0) 
 		get_tree().root.add_child(bullet_hole)
+		var rotation = bullet_hole.basis #Basis()
+		rotation = rotation.rotated(collision.normal, randf())  # Drehung um die Normalenachse
+		bullet_hole.basis = rotation * bullet_hole.basis
 		bullet_hole.global_position = collision.position + collision.normal * 0.001
 		bullet_hole.global_transform = align_with_normal(bullet_hole.global_transform, collision.normal)
 
@@ -249,6 +252,9 @@ func _shoot(root, target):
 	bullet_hole.material_override = StandardMaterial3D.new()
 	bullet_hole.material_override.albedo_color = Color(0, 0, 0) 
 	get_tree().root.add_child(bullet_hole)
+	var rotation = bullet_hole.basis #Basis()
+	rotation = rotation.rotated(collision.normal, randf())  # Drehung um die Normalenachse
+	bullet_hole.basis = rotation * bullet_hole.basis
 	bullet_hole.global_position = target.position + target.normal * 0.01
 	bullet_hole.global_transform = align_with_normal(bullet_hole.global_transform, target.normal)
 
