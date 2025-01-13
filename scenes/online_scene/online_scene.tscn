@@ -1,8 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://7qrebi2gqtno"]
+[gd_scene load_steps=10 format=3 uid="uid://b1ipqsvsel5vq"]
 
-[ext_resource type="Script" path="res://scenes/main/main.gd" id="1_rj0nf"]
-[ext_resource type="PackedScene" uid="uid://bxv0sdh81ec2f" path="res://prefabs/player/player.tscn" id="2_706lx"]
-[ext_resource type="Script" path="res://scenes/main/spawnarea.gd" id="2_kqgfh"]
+[ext_resource type="Script" path="res://scenes/main/main.gd" id="1_63g1d"]
+[ext_resource type="PackedScene" uid="uid://bxv0sdh81ec2f" path="res://prefabs/player/player.tscn" id="2_wumlg"]
+[ext_resource type="Script" path="res://scenes/main/spawnarea.gd" id="3_emfma"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_rpj3h"]
 data = PackedVector3Array(16, 0, 16, -16, 0, 16, 16, 0, -16, -16, 0, 16, -16, 0, -16, 16, 0, -16)
@@ -22,8 +22,8 @@ data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0
 size = Vector3(5, 1, 5)
 
 [node name="Main" type="Node3D"]
-script = ExtResource("1_rj0nf")
-player_prefab = ExtResource("2_706lx")
+script = ExtResource("1_63g1d")
+player_prefab = ExtResource("2_wumlg")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 15, 0)
@@ -31,10 +31,11 @@ shadow_enabled = true
 directional_shadow_max_distance = 250.0
 
 [node name="Menu" type="VBoxContainer" parent="."]
+anchors_preset = -1
 offset_left = 28.0
 offset_top = 30.0
 offset_right = 183.0
-offset_bottom = 298.0
+offset_bottom = 233.0
 
 [node name="Host" type="Button" parent="Menu"]
 layout_mode = 2
@@ -58,10 +59,6 @@ layout_mode = 2
 text = "27015"
 placeholder_text = "Port"
 
-[node name="Button" type="Button" parent="Menu"]
-layout_mode = 2
-text = "Change Scene"
-
 [node name="NetworkInfo" type="VBoxContainer" parent="."]
 anchors_preset = 5
 anchor_left = 0.5
@@ -73,12 +70,10 @@ grow_horizontal = 2
 
 [node name="NetworkSideDisplay" type="Label" parent="NetworkInfo"]
 layout_mode = 2
-text = "Not running"
 horizontal_alignment = 1
 
 [node name="UniquePeerID" type="Label" parent="NetworkInfo"]
 layout_mode = 2
-text = "Peer ID:"
 horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="NetworkInfo"]
@@ -99,7 +94,6 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="Floor" type="StaticBody3D" parent="."]
-visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("ConcavePolygonShape3D_rpj3h")
@@ -112,7 +106,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_tabfr")
 
 [node name="Box" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(0.906941, 0, 0.421257, 0, 1, 0, -0.421257, 0, 0.906941, 0, 0.411786, -4.93114)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -122,7 +115,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box2" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(-0.651622, 0, -0.758544, 0, 1, 0, 0.758544, 0, -0.651622, -1.34581, 1.31086, -4.93114)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box2"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -132,7 +124,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box3" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(0.817979, 0, -0.575248, 0, 1, 0, 0.575248, 0, 0.817979, -2.72783, 2.11871, -4.93114)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box3"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -142,7 +133,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box4" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(0.588279, 0, 0.808658, 0, 1, 0, -0.808658, 0, 0.588279, -4.10374, 2.96715, -4.93114)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box4"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -152,7 +142,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box5" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(-0.414137, 0, 0.910214, 0, 1, 0, -0.910214, 0, -0.414137, -4.64094, 3.45028, -3.51186)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box5"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -162,7 +151,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box6" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(0.753414, 0, -0.657546, 0, 1, 0, 0.657546, 0, 0.753414, -4.65148, 4.34935, -2.16609)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box6"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -172,7 +160,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box7" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(0.58164, 0, 0.813446, 0, 1, 0, -0.813446, 0, 0.58164, -4.66231, 5.1572, -0.784111)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box7"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -182,7 +169,6 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Box8" type="StaticBody3D" parent="Boxes"]
 transform = Transform3D(-0.804023, 0, 0.594598, 0, 1, 0, -0.594598, 0, -0.804023, -4.67309, 6.00564, 0.591762)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Boxes/Box8"]
 mesh = SubResource("BoxMesh_mns0i")
@@ -192,14 +178,12 @@ shape = SubResource("ConcavePolygonShape3D_78niq")
 
 [node name="Area3D" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.18297, 0.531664, 5.28299)
-visible = false
-script = ExtResource("2_kqgfh")
+script = ExtResource("3_emfma")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("BoxShape3D_bjb7l")
 
 [connection signal="pressed" from="Menu/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Menu/Join" to="." method="_on_join_pressed"]
-[connection signal="pressed" from="Menu/Button" to="." method="_on_change_scene_pressed"]
 [connection signal="pressed" from="NetworkInfo/Button" to="." method="_on_button_pressed"]
 [connection signal="text_submitted" from="MessageInput" to="." method="_on_message_input_text_submitted"]
