@@ -197,7 +197,7 @@ func align_with_normal(xform, normal):
 	xform.basis = xform.basis.orthonormalized()
 	return xform
 
-# Gets called from remote player by RPC
+# Gets called from remote player 
 func take_damage(amount):
 	health -= amount
 	if health <= 0:
