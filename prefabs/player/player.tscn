@@ -62,6 +62,8 @@ fov = 60.0
 
 [node name="Weapon" type="MeshInstance3D" parent="Head"]
 transform = Transform3D(0.980122, 0, 0.198393, 0, 1, 0, -0.198393, 0, 0.980122, -0.101959, -0.12658, -1.15574)
+visible = false
+layers = 2
 mesh = SubResource("BoxMesh_rd3qy")
 
 [node name="Message" type="Label3D" parent="."]
