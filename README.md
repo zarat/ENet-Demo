@@ -2,4 +2,8 @@
 Godot 4 Multiplayer Demo
 
 # ToDo
-Scene changing
+ - test map - OK
+ - character controller - OK
+ - multiplayer - OK
+ - Scene changing In Progress
+ - cleanup
