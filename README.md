@@ -7,5 +7,5 @@ Godot 4 Multiplayer Demo
  - multiplayer - OK
  - health/damage - OK
  - respawn - OK
- - Scene changing In Progress
+ - Scene changing - In Progress
  - cleanup
