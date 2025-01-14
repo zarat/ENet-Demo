@@ -17,6 +17,7 @@ var is_paused = false
 var health = 100
 
 var target_position: Vector3
+var respawning = false
 
 func _ready():
 	
@@ -34,7 +35,8 @@ func _ready():
 	else:
 		weaponcamera.current = false
 		maincamera.current = false
-	
+		
+	# Find a position to spawn
 	var spawnarea = get_tree().root.get_node("Main/Area3D")
 	if spawnarea:
 		position = spawnarea.get_random_position_within_area()
@@ -52,7 +54,6 @@ func _physics_process(delta):
 		rpc("remote_set_rotation", global_rotation)
 		move_and_slide()
 	else:
-		# interpolate towards target position set by remote_set_position.rpc()
 		global_position = global_position.lerp(target_position, 10 * delta)
 		
 func get_input():
@@ -122,11 +123,10 @@ func shoot():
 			# send message to everyone except ourself
 			rpc("send_message", str(collision.collider.get_multiplayer_authority()) + " was shot by " + str(get_multiplayer_authority()))
 		
+		# If the collider has the RPC method "take_damage" we call it in our local scene
 		if collision.collider.has_method("take_damage"):
-			collision.collider.take_damage(10)
-			#rpc_id(collision.collider.get_multiplayer_authority(), "take_damage", int(30 - collision.position.distance_to(raystartposition)))
-			#rpc_id(collision.collider.get_multiplayer_authority(), "_take_damage", 10)
-			
+			collision.collider.take_damage.rpc(10)
+		
 		var linemesh = ImmediateMesh.new()
 		linemesh.surface_begin(Mesh.PRIMITIVE_LINES)
 		linemesh.surface_add_vertex(raystartposition)
@@ -189,65 +189,76 @@ func shoot():
 		get_tree().root.add_child(linetimer)
 		linetimer.start()
 		
-		rpc("_shoot", raystartposition, collision)
-
+		# we have no collission here
+		#rpc("_shoot", raystartposition, collision)
+		
 func align_with_normal(xform, normal):
 	xform.basis.y = normal
 	xform.basis.x = -xform.basis.z.cross(normal)
 	xform.basis = xform.basis.orthonormalized()
 	return xform
-
-# Gets called from remote player 
+	
+# Can be called by any player in his local scene
+@rpc ("any_peer")
 func take_damage(amount):
+	# We just execute this function if this instance is the authority of the player
+	if not is_multiplayer_authority():
+		return
+	# Apply damage
 	health -= amount
+	# If we die
 	if health <= 0:
+		# Find a respawn spot
 		var area = get_tree().root.get_node("Main/Area3D")
 		if area:
 			var random_position = area.get_random_position_within_area()
-			position = random_position
-			print(str(position))
+			# Set our local position
+			global_position = random_position
+			# Synchronize our new position to others
+			rpc("remote_set_position", random_position)
 		health = 100
+	# Update our tag locally
 	$Message.text = str(health)
+	# Synchronize our tag to others
 	rpc("sync_health", health) 
 
-# Gets called by take_damage
-@rpc ("any_peer")
+@rpc
 func sync_health(new_health):
-	health = new_health
-	$Message.text = str(health)
-	
-# Gets called by shoot()
+	$Message.text = str(new_health)
+
+# Gets called by shoot() to play remote vfx
 @rpc
 func _shoot(root, target):
-
+	# we only add a bullet hole, no lines
 	var bullet_hole = MeshInstance3D.new()
 	bullet_hole.mesh = PlaneMesh.new()
 	bullet_hole.mesh.size = Vector2(.1, .1) 
 	bullet_hole.material_override = StandardMaterial3D.new()
 	bullet_hole.material_override.albedo_color = Color(0, 0, 0) 
 	get_tree().root.add_child(bullet_hole)
-	
+	# rotate the patch
 	var rotation = bullet_hole.basis #Basis()
 	rotation = rotation.rotated(target.normal, randf())  # Drehung um die Normalenachse
 	bullet_hole.basis = rotation * bullet_hole.basis
 	bullet_hole.global_position = target.position + target.normal * 0.01
 	bullet_hole.global_transform = align_with_normal(bullet_hole.global_transform, target.normal)
-
+	# die after time
 	var bullet_holetimer = Timer.new()
 	bullet_holetimer.wait_time = 2.0  # seconds
 	bullet_holetimer.one_shot = true  
 	bullet_holetimer.timeout.connect(bullet_hole.queue_free)
 	get_tree().root.add_child(bullet_holetimer)
 	bullet_holetimer.start()
-	
+
 @rpc 
 func remote_set_position(authority_position):
 	target_position = authority_position
-	
+	#global_position = authority_position
+
 @rpc 
 func remote_set_rotation(authority_rotation):
 	global_rotation = authority_rotation
 
 @rpc ("any_peer")
 func send_message(message):
-	print(message)
+	print("[" + str(multiplayer.get_remote_sender_id()) + "::" + str(multiplayer.get_unique_id()) + "]" + message)
